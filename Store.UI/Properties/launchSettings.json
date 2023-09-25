@@ -1,5 +1,6 @@
 ﻿{
-  "Store.UI": {
+  "profiles": {
+    "Store.UI": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
       "launchBrowser": true,
