@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using Store.Domain;
 
 namespace Store.Data
 {
@@ -7,19 +6,24 @@ namespace Store.Data
     {
         private Book[] Books = new Book[]
         {
-            new Book(1, "True"),
-            new Book(2, "Forewer"),
-            new Book(3, "False")
+            new Book(1, "True", "Kevin", "ISBN 12345-12345"),
+            new Book(2, "Forewer", "Justin", "ISBN 12345-12346"),
+            new Book(3, "False", "Jack", "ISBN 12345-67891")
         };
 
-        public Book GetBookByTitle(string title)
+        public Book[] GetAllBooksByAuthorOrTitle(string query)
         {
-            return Books.FirstOrDefault(b => b.Title == title);
+            return Books.Where(s => s.Author.Contains(query) || s.Title.Contains(query)).ToArray();
         }
 
-        public Book[] GetAllBooksByTitle(string title)
+        public Book[] GetBookByIsbn(string isbn)
         {
-            return Books.Where(b => string.IsNullOrEmpty(title) || b.Title.ToLowerInvariant().Contains(title.ToLowerInvariant())).ToArray();
+            return Books.Where(b => b.Isbn == isbn).ToArray();
+        }
+
+        public Book[] GetAllBooks()
+        {
+            return Books;
         }
     }
 }

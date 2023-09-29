@@ -1,8 +1,9 @@
-﻿namespace Store.Domain
+﻿namespace Store
 {
     public interface IBookRepository
     {
-        Book GetBookByTitle(string title);
-        Book[] GetAllBooksByTitle(string title);
+        Book[] GetAllBooksByAuthorOrTitle(string query);
+        Book[] GetBookByIsbn(string isbn);
+        Book[] GetAllBooks();
     }
 }
