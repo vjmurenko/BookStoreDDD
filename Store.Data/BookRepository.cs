@@ -25,5 +25,10 @@ namespace Store.Data
         {
             return Books;
         }
+
+        public Book GetBookById(int id)
+        {
+            return Books.Single(b => b.Id == id);
+        }
     }
 }

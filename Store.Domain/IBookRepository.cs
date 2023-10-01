@@ -5,5 +5,6 @@
         Book[] GetAllBooksByAuthorOrTitle(string query);
         Book[] GetBookByIsbn(string isbn);
         Book[] GetAllBooks();
+        Book GetBookById(int id);
     }
 }
