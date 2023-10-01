@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Store.Book>
+﻿@using Store.Web.Controllers
+@model IEnumerable<Store.Book>
 
 @{
     ViewData["Title"] = "View";
@@ -10,7 +11,7 @@
     <button class="btn btn-success mb-2" type="submit">Search</button>
 </form>
 
-<table class="table table-bordered">
+<table class="table table-bordered table-hover">
     <thead>
     <tr>
         <th>
@@ -29,7 +30,7 @@
     </thead>
     <tbody>
     @foreach (var item in Model) {
-        <tr>
+        <tr  style="cursor: pointer" onclick="location.href = '@Url.Action("Index", "Book", new {id = item.Id})'">
             <td>
                 @Html.DisplayFor(modelItem => item.Id)
             </td>
@@ -42,11 +43,6 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Isbn)
             </td>
-            @* <td> *@
-            @*     @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) | *@
-            @*     @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) | *@
-            @*     @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ }) *@
-            @* </td> *@
         </tr>
     }
     </tbody>

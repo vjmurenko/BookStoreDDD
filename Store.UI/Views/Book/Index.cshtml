@@ -1,0 +1,22 @@
+﻿@model Store.Book
+
+@{
+    ViewData["Title"] = "BookDetails";
+}
+
+<div class="col-6 border mx-auto">
+    <h2 class="text-center">@Model.Title</h2>
+    <dl>
+        <div class="row">
+            <dt class="col-4">@Html.DisplayNameFor(s => s.Author)</dt>
+            <dd class="col-8">@Model.Author</dd>
+        </div>
+        <div class="row">
+            <dt class="col-4">@Html.DisplayNameFor(s => s.Isbn)</dt>
+            <dd class="col-8">@Model.Isbn</dd>
+        </div>
+    </dl>
+</div>
+<div class="text-center mt-3">
+    <a asp-controller="Search" asp-action="Index" class="btn btn-primary ">Go back</a>
+</div>
