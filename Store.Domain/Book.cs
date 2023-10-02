@@ -8,10 +8,14 @@ namespace Store
         public string Title { get; }
         public string Author { get; set; }
         public string Isbn { get; set; }
-        public Book(int id, string title, string author, string isbn)
+        public decimal Price { get; set; }
+        public string Description { get; set; }
+        public Book(int id, string title, string author, string isbn, string description, decimal price)
         {
             Author = author;
             Isbn = isbn;
+            Description = description;
+            Price = price;
             Id = id;
             Title = title;
         }
