@@ -6,9 +6,9 @@
 }
 
 <h2>Введите название книги или автора</h2>
-<form class="col-6"  method="get" asp-controller="Search" asp-action="Index" >
-    <input autocomplete="off" name="query" class="form-control d-inline w-50"/>
-    <button class="btn btn-success mb-2" type="submit">Search</button>
+<form class="form-inline my-2"  method="get" asp-controller="Search" asp-action="Index" >
+    <input autocomplete="off" name="query" class="form-control mr-2"/>
+    <button class="btn btn-success" type="submit">Search</button>
 </form>
 
 <table class="table table-bordered table-hover">
@@ -26,6 +26,12 @@
         <th>
             @Html.DisplayNameFor(model => model.Isbn)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Price)
+        </th>
     </tr>
     </thead>
     <tbody>
@@ -42,6 +48,12 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Isbn)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
             </td>
         </tr>
     }

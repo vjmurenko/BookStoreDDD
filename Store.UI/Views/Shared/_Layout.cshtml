@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using Store.Web
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -25,6 +26,23 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+                    <a class="nav-link" asp-controller="Cart">
+                        <span>
+                           @{
+                               if (!Context.Session.TryGetCart(out var cart))
+                                   cart = new Cart();
+                               if (cart.Items.Count == 0)
+                               {
+                                   @: Корзина пуста
+                               }
+                               else
+                               {
+                                   @: В корзине @cart.Items.Count товаров на сумму @cart.Amount
+                               }
+                           }
+
+                        </span>
+                    </a>
                 </div>
             </div>
         </nav>

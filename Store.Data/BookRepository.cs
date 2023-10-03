@@ -6,9 +6,9 @@ namespace Store.Data
     {
         private Book[] Books = new Book[]
         {
-            new Book(1, "True", "Kevin", "ISBN 12345-12345"),
-            new Book(2, "Forewer", "Justin", "ISBN 12345-12346"),
-            new Book(3, "False", "Jack", "ISBN 12345-67891")
+            new Book(1, "True", "Kevin", "ISBN 12345-12345", "some book", 20m),
+            new Book(2, "Forewer", "Justin", "ISBN 12345-12346", "anouther book", 30m),
+            new Book(3, "False", "Jack", "ISBN 12345-67891", "third book", 10m)
         };
 
         public Book[] GetAllBooksByAuthorOrTitle(string query)
