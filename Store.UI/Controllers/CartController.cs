@@ -6,10 +6,12 @@ namespace Store.Web.Controllers;
 public class CartController : Controller
 {
     private readonly IBookRepository _bookRepository;
+    private readonly IOrderRepository _orderRepository;
 
-    public CartController(IBookRepository bookRepository)
+    public CartController(IBookRepository bookRepository, IOrderRepository orderRepository)
     {
         _bookRepository = bookRepository;
+        _orderRepository = orderRepository;
     }
     // GET
     public IActionResult Index()
@@ -19,23 +21,24 @@ public class CartController : Controller
 
     public IActionResult Add(int id)
     {
-        var book = _bookRepository.GetBookById(id);
-        Cart cart;
-        if (!HttpContext.Session.TryGetCart(out  cart))
+        Order order;
+        
+        if(HttpContext.Session.TryGetCart(out var cart))
         {
-            cart = new Cart();
-        }
-
-        if (cart.Items.ContainsKey(id))
-        {
-            cart.Items[id] += 1;
+            order = _orderRepository.GetById(cart.OrderId);
         }
         else
         {
-            cart.Items[id] = 1;
+            order = _orderRepository.Create();
+            cart = new Cart(order.Id);
         }
 
-        cart.Amount += book.Price;
+        var book = _bookRepository.GetBookById(id);
+        order.AddItem(book, 1);
+        _orderRepository.Update(order);
+
+        cart.TotalPrice = order.TotalPrice;
+        cart.TotalCount = order.TotalCount;
 
         HttpContext.Session.Set(cart);
         return RedirectToAction("Index", "Book", new { id });
