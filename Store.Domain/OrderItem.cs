@@ -12,7 +12,7 @@ public class OrderItem
     {
         if (count <= 0)
         {
-            throw new ArgumentNullException("count must be above zero");
+            throw new ArgumentOutOfRangeException("count must be above zero");
         }
         Id = id;
         Price = price;
