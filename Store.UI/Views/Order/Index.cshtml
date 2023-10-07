@@ -1,0 +1,44 @@
+﻿@model OrderModel
+@{
+    ViewData["Title"] = "Корзина";
+}
+<div class="container">
+
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+        <tr>
+            <th>@Html.DisplayNameFor(s => s.OrderItems.First().Id)</th>
+            <th>@Html.DisplayNameFor(s => s.OrderItems.First().Title)</th>
+            <th>@Html.DisplayNameFor(s => s.OrderItems.First().Author)</th>
+            <th>@Html.DisplayNameFor(s => s.OrderItems.First().Isbn)</th>
+            <th>@Html.DisplayNameFor(s => s.OrderItems.First().Count)</th>
+            <th>@Html.DisplayNameFor(s => s.OrderItems.First().Price)</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var book in Model.OrderItems)
+        {
+            <tr>
+                <td>@book.Id</td>
+                <td>@book.Title</td>
+                <td>@book.Author</td>
+                <td>@book.Isbn</td>
+                <td>@book.Count</td>
+                <td>@book.Price</td>
+            </tr>
+        }
+        </tbody>
+        <tfoot class="table-light" >
+        <tr>
+            <th colspan="4" class="text-lg-right">Итого</th>
+            <th colspan="1">@Html.DisplayNameFor(s => s.TotalCount)</th>
+            <th colspan="1">@Html.DisplayNameFor(s => s.TotalPrice)</th>
+        </tr>
+        <tr>
+            <td colspan="4"></td>
+            <td>@Model.TotalCount</td>
+            <td>@Model.TotalPrice</td>
+        </tr>
+        </tfoot>
+    </table>
+</div>

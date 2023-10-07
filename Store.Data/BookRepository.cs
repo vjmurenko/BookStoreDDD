@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Store.Data
 {
@@ -24,6 +25,11 @@ namespace Store.Data
         public Book[] GetAllBooks()
         {
             return Books;
+        }
+
+        public Book[] GetBooksByIds(IEnumerable<int> bookIds)
+        {
+            return Books.Join(bookIds, book => book.Id, bookId => bookId, (book, _) => book).ToArray();
         }
 
         public Book GetBookById(int id)

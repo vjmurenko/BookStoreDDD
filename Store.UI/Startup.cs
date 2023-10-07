@@ -22,6 +22,7 @@ namespace Store.Web
         {
             services.AddControllersWithViews();
             services.AddSingleton<IBookRepository, BookRepository>();
+            services.AddSingleton<IOrderRepository, OrderRepository>();
             services.AddSingleton<BookService>();
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
@@ -29,6 +30,7 @@ namespace Store.Web
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
                 options.IdleTimeout = TimeSpan.FromMinutes(20);
+                options.Cookie.Name = "Web.UI";
             });
         }
 
