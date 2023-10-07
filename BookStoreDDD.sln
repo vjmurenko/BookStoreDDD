@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Store", "Store.Domain\Store
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Store.Data", "Store.Data\Store.Data.csproj", "{B2EAAA9D-E089-4256-B702-0A6B65BBAFED}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Store.Web", "Store.UI\Store.Web.csproj", "{F521627C-6A8E-4E43-AB53-B3A3E3DD3C91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Store.UI", "Store.UI\Store.UI.csproj", "{F521627C-6A8E-4E43-AB53-B3A3E3DD3C91}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Store.Tests", "Store.Tests\Store.Tests.csproj", "{8F3A6A93-2055-4D5D-9BAF-098C374C440C}"
 EndProject

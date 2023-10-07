@@ -26,21 +26,16 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
-                    <a class="nav-link" asp-controller="Cart">
-                        <span>
-                           @{
-                               if (!Context.Session.TryGetCart(out var cart) || cart.TotalCount <= 0)
-                               {
-                                   @: Корзина пуста
-                               }
-                               else
-                               {
-                                   @: В корзине @cart.TotalCount товаров на сумму @cart.TotalPrice
-                               }
-                           }
-
-                        </span>
-                    </a>
+                    @{
+                        if (Context.Session.TryGetCart(out var cart) && cart.TotalCount > 0)
+                        {
+                            <a href="@Url.Action("Index", "Order")">В корзине @cart.TotalCount товаров на сумму @cart.TotalPrice</a>
+                        }
+                        else
+                        {
+                            <span class="navbar-text">Корзина пуста</span>
+                        }
+                    }
                 </div>
             </div>
         </nav>

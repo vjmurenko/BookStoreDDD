@@ -30,6 +30,7 @@ namespace Store.Web
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
                 options.IdleTimeout = TimeSpan.FromMinutes(20);
+                options.Cookie.Name = "Web.UI";
             });
         }
 
