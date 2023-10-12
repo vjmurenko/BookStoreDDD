@@ -13,6 +13,7 @@
             <th>@Html.DisplayNameFor(s => s.OrderItems.First().Isbn)</th>
             <th>@Html.DisplayNameFor(s => s.OrderItems.First().Count)</th>
             <th>@Html.DisplayNameFor(s => s.OrderItems.First().Price)</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -25,20 +26,25 @@
                 <td>@book.Isbn</td>
                 <td>@book.Count</td>
                 <td>@book.Price</td>
+                <td><button onclick="location.href = '@Url.Action("Delete", "Order", new {id = book.Id})'" class="btn btn-danger">Delete</button></td>
             </tr>
         }
         </tbody>
         <tfoot class="table-light" >
         <tr>
-            <th colspan="4" class="text-lg-right">Итого</th>
-            <th colspan="1">@Html.DisplayNameFor(s => s.TotalCount)</th>
-            <th colspan="1">@Html.DisplayNameFor(s => s.TotalPrice)</th>
+            <th colspan="5" class="text-lg-right">Итого</th>
+            <th colspan="">@Html.DisplayNameFor(s => s.TotalCount)</th>
+            <th colspan="">@Html.DisplayNameFor(s => s.TotalPrice)</th>
         </tr>
         <tr>
-            <td colspan="4"></td>
+            <td colspan="5"></td>
             <td>@Model.TotalCount</td>
             <td>@Model.TotalPrice</td>
         </tr>
+         <tr>
+             <td colspan="6"></td>
+             <td><button class="btn btn-danger" onclick="location.href='@Url.Action("DeleteAll")'">Delete all</button></td>
+         </tr>
         </tfoot>
     </table>
 </div>
