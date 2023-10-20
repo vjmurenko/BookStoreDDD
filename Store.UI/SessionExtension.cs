@@ -16,6 +16,12 @@ public static class SessionExtension
 			return;
 		}
 
+		if (cart.TotalCount == 0)
+		{
+			session.CleanCart();
+			return;
+		}
+
 		using (var stream = new MemoryStream())
 		using (var writer = new BinaryWriter(stream, Encoding.UTF8, true))
 		{

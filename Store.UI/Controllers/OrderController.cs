@@ -42,7 +42,7 @@ public class OrderController : Controller
 		}
 
 		var book = _bookRepository.GetBookById(id);
-		order.AddItem(book, 1);
+		order.AddOrUpdateItem(book, 1);
 		_orderRepository.Update(order);
 
 		cart.TotalPrice = order.TotalPrice;
@@ -57,7 +57,7 @@ public class OrderController : Controller
 		if (HttpContext.Session.TryGetCart(out var cart))
 		{
 			var order = _orderRepository.GetById(cart.OrderId);
-			order.DeleteItem(id);
+			order.RemoveItem(id);
 			cart.TotalCount = order.TotalCount;
 			cart.TotalPrice = order.TotalPrice;
 			HttpContext.Session.Set(cart);
@@ -79,11 +79,11 @@ public class OrderController : Controller
 
 	private OrderModel MapOrder(Order order)
 	{
-		var books = _bookRepository.GetBooksByIds(order.Items.Select(s => s.Id));
+		var books = _bookRepository.GetBooksByIds(order.Items.Select(s => s.BookId));
 
 
 		var orderItemModels = (from book in books
-							   join orderItem in order.Items on book.Id equals orderItem.Id
+							   join orderItem in order.Items on book.Id equals orderItem.BookId
 							   select new OrderItemModel()
 							   {
 								   Id = book.Id,

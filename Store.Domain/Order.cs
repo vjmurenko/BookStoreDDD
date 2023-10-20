@@ -7,13 +7,14 @@ namespace Store;
 public class Order
 {
 	public int Id { get; set; }
+	
+	private List<OrderItem> _items;
+	
+	public IReadOnlyCollection<OrderItem> Items => _items;
+	
 	public decimal TotalPrice => _items.Sum(i => i.Price * i.Count);
 
 	public int TotalCount => _items.Sum(i => i.Count);
-
-	private List<OrderItem> _items;
-
-	public IReadOnlyCollection<OrderItem> Items => _items;
 
 	public Order(int id, IEnumerable<OrderItem> items)
 	{
@@ -25,35 +26,34 @@ public class Order
 		_items = new List<OrderItem>(items);
 	}
 
-	public void AddItem(Book book, int count)
+	public void AddOrUpdateItem(Book book, int count)
 	{
 		if (book == null)
 		{
 			throw new ArgumentNullException(nameof(book));
 		}
 
-		var item = _items.FirstOrDefault(i => i.Id == book.Id);
-		if (item == null)
+
+		var index = _items.FindIndex(i => i.BookId == book.Id);
+		if (index == -1)
 		{
 			_items.Add(new OrderItem(book.Id, book.Price, count));
 		}
 		else
 		{
-			item.Count++;
+			_items[index].Count += count;
 		}
 	}
 
-	public void DeleteItem(int id)
+	public void RemoveItem(int bookId)
 	{
-		var item = _items.First(i => i.Id == id);
-		if (item.Count > 1)
+		var index = _items.FindIndex(item => item.BookId == bookId);
+
+		if (index == -1)
 		{
-			item.Count--;
+			ThrowBookException("Order doesn't contain specified item", bookId);
 		}
-		else
-		{
-			_items.Remove(item);
-		}
+		_items.RemoveAt(index);
 	}
 
 	public void DeleteAll()
@@ -61,5 +61,11 @@ public class Order
 		_items.Clear();
 	}
 
-
+	private static void ThrowBookException(string message, int bookId)
+	{
+		var exception = new ArgumentException(message);
+		exception.Data["bookId"] = bookId;
+		throw exception;
+	}
+	
 }
