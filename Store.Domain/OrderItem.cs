@@ -21,7 +21,6 @@ public class OrderItem
 
     public OrderItem(int bookId, decimal price, int count)
     {
-        
         ThrowIfInvalidCount(count);
         
         BookId = bookId;
@@ -36,5 +35,4 @@ public class OrderItem
             throw new ArgumentOutOfRangeException("Count must be greater than zero");
         }
     }
-
 }

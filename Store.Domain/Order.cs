@@ -26,14 +26,24 @@ public class Order
 		_items = new List<OrderItem>(items);
 	}
 
+	public OrderItem GetItem(int bookId)
+	{
+		var index = _items.FindIndex(i => i.BookId == bookId);
+		if (index == -1)
+		{
+			ThrowBookException("Book not found", bookId);
+		}
+
+		return _items[index];
+	}
+
 	public void AddOrUpdateItem(Book book, int count)
 	{
 		if (book == null)
 		{
 			throw new ArgumentNullException(nameof(book));
 		}
-
-
+		
 		var index = _items.FindIndex(i => i.BookId == book.Id);
 		if (index == -1)
 		{

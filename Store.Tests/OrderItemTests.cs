@@ -21,4 +21,35 @@ public class OrderItemTests
         var orderItem = new OrderItem(2, 20, countdownEvent);
         Assert.Equal(countdownEvent, orderItem.Count);
     }
+
+
+    [Fact]
+    public void Count_WithZeroValue_ThrowsArgumentOutOfRangeException()
+    {
+        var orderItem = new OrderItem(1, 2, 3);
+
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+        {
+            orderItem.Count = 0;
+        });
+    }
+
+    [Fact]
+    public void Count_WithNegativeValue_ThrowsArgumentOutOfRangeException()
+    {
+        var orderItem = new OrderItem(1, 2, 3);
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+        {
+            orderItem.Count = -3;
+        });
+    }
+    
+    [Fact]
+    public void Count_WithPositiveValue_SetsCount()
+    {
+        var orderItem = new OrderItem(1, 2, 3);
+
+        orderItem.Count = 50;
+        Assert.Equal(50, orderItem.Count);
+    }
 }
