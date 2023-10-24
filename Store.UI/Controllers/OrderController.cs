@@ -27,7 +27,7 @@ public class OrderController : Controller
 		return View("Empty");
 	}
 
-	public IActionResult Add(int id)
+	public IActionResult Add(int bookId)
 	{
 		Order order;
 
@@ -41,7 +41,7 @@ public class OrderController : Controller
 			cart = new Cart(order.Id);
 		}
 
-		var book = _bookRepository.GetBookById(id);
+		var book = _bookRepository.GetBookById(bookId);
 		order.AddOrUpdateItem(book, 1);
 		_orderRepository.Update(order);
 
@@ -49,15 +49,15 @@ public class OrderController : Controller
 		cart.TotalCount = order.TotalCount;
 
 		HttpContext.Session.Set(cart);
-		return RedirectToAction("Index", "Book", new { id });
+		return RedirectToAction("Index", "Book", new { id = bookId });
 	}
 
-	public IActionResult Delete(int id)
+	public IActionResult RemoveItem(int bookId)
 	{
 		if (HttpContext.Session.TryGetCart(out var cart))
 		{
 			var order = _orderRepository.GetById(cart.OrderId);
-			order.RemoveItem(id);
+			order.RemoveItem(bookId);
 			cart.TotalCount = order.TotalCount;
 			cart.TotalPrice = order.TotalPrice;
 			HttpContext.Session.Set(cart);

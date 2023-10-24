@@ -17,20 +17,26 @@
         </tr>
         </thead>
         <tbody>
-        @foreach (var book in Model.OrderItems)
+        @for (var i = 0; i < Model.OrderItems.Count; i++)
         {
+            var book = Model.OrderItems[i];
             <tr>
-                <td>@book.Id</td>
+                <td>@i+1</td>
                 <td>@book.Title</td>
                 <td>@book.Author</td>
                 <td>@book.Isbn</td>
                 <td>@book.Count</td>
                 <td>@book.Price</td>
-                <td><button onclick="location.href = '@Url.Action("Delete", "Order", new {id = book.Id})'" class="btn btn-danger">Delete</button></td>
+                <td>
+                    <form action="@Url.Action("RemoveItem", "Order")">
+                        <input type="hidden" name="bookId" value="@book.Id">
+                        <button class="btn btn-danger" type="submit">Delete</button>
+                    </form>
+                </td>
             </tr>
         }
         </tbody>
-        <tfoot class="table-light" >
+        <tfoot class="table-light">
         <tr>
             <th colspan="5" class="text-lg-right">Итого</th>
             <th colspan="">@Html.DisplayNameFor(s => s.TotalCount)</th>
@@ -41,10 +47,12 @@
             <td>@Model.TotalCount</td>
             <td>@Model.TotalPrice</td>
         </tr>
-         <tr>
-             <td colspan="6"></td>
-             <td><button class="btn btn-danger" onclick="location.href='@Url.Action("DeleteAll")'">Delete all</button></td>
-         </tr>
+        <tr>
+            <td colspan="6"></td>
+            <td>
+                <button class="btn btn-danger" onclick="location.href='@Url.Action("DeleteAll")'">Delete all</button>
+            </td>
+        </tr>
         </tfoot>
     </table>
 </div>
