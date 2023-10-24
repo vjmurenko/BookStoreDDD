@@ -4,19 +4,35 @@ namespace Store;
 
 public class OrderItem
 {
-    public int Id { get; set; }
-    public decimal Price { get; set; }
-    public int Count { get; set; }
 
-    public OrderItem(int id, decimal price, int count)
+    private int _count;
+    public int BookId { get; set; }
+    public decimal Price { get; set; }
+
+    public int Count
     {
-        if (count <= 0)
+        get => _count;
+        set
         {
-            throw new ArgumentOutOfRangeException("count must be above zero");
+            ThrowIfInvalidCount(value);
+            _count = value;
         }
-        Id = id;
+    }
+
+    public OrderItem(int bookId, decimal price, int count)
+    {
+        ThrowIfInvalidCount(count);
+        
+        BookId = bookId;
         Price = price;
         Count = count;
     }
 
+    private static void ThrowIfInvalidCount(int count)
+    {
+        if (count <= 0)
+        {
+            throw new ArgumentOutOfRangeException("Count must be greater than zero");
+        }
+    }
 }
