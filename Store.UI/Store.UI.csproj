@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Views\Cart\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Phone\Index.cshtml" />
   </ItemGroup>
 
 </Project>

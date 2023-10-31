@@ -48,11 +48,20 @@
             <td>@Model.TotalPrice</td>
         </tr>
         <tr>
-            <td colspan="6"></td>
+            <td colspan="6" class="text-center">
+            </td>
             <td>
                 <button class="btn btn-danger" onclick="location.href='@Url.Action("DeleteAll")'">Delete all</button>
             </td>
         </tr>
         </tfoot>
     </table>
+    <form asp-controller="Order" asp-action="SendCode">
+        <div class="form-group">
+            <input type="hidden" name="orderId" value="@Model.Id">
+            <label for="phone">Номер телефона</label>
+            <input id="phone" type="text" name="phoneNumber" placeholder="+712345678" value="+712345678" maxlength="11" class="form-control" required>
+        </div>
+        <button class="btn btn-success">Отправить код</button>
+    </form>
 </div>

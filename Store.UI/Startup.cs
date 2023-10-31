@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Store.Data;
+using Store.Mesages;
 
 namespace Store.Web
 {
@@ -23,6 +24,7 @@ namespace Store.Web
             services.AddControllersWithViews();
             services.AddSingleton<IBookRepository, BookRepository>();
             services.AddSingleton<IOrderRepository, OrderRepository>();
+            services.AddSingleton<INotificationService, ConsoleService>();
             services.AddSingleton<BookService>();
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
