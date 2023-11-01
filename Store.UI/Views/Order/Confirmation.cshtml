@@ -4,26 +4,20 @@
 }
 <h1>Подтверждение мобильного телефона</h1>
 <div class="w-50">
-    <form asp-action="StartDelivery">
+    <form asp-action="Confirm">
         <div class="form-group">
             <input type="hidden" name="orderId" value="@Model.OrderId">
             <input type="hidden" name="phoneNumber" value="@Model.PhoneNumber"/>
             <label for="code">Введите код подтверждения</label>
-            <input type="text" id="code" class="form-control" name="code" placeholder="0000"/>
-            @if (Model.Errors.Any())
+            <input type="text" id="code" class="form-control" name="code" value="1111" placeholder="1111"/>
+            @if (Model.Errors.ContainsKey("code"))
             {
-                <small class="text-danger">
-                    @foreach (var error in Model.Errors.Select(s => s.Value))
-                    {
-                        @error
-                        <br/>
-                    }
-                </small>
+                <small class="text-danger">@Model.Errors["code"]</small>
             }
         </div>
         <button class="btn btn-success" type="submit">Отправить</button>
     </form>
-    <form asp-action="SendCode">
+    <form asp-action="SendConfirmationCode">
         <div class="form-group">
             <input type="hidden" name="orderId" value="@Model.OrderId">
             <label for="phoneNumber">Введите номер телефона для повторной отправки</label>

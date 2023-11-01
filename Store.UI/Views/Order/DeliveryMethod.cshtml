@@ -1,0 +1,19 @@
+@model DeliveryModel
+@{
+    ViewData["Title"] = "Способ доставки";
+}
+
+<h1>Способ доставки</h1>
+<form method="post" action="@Url.Action("StartDelivery")">
+    <div class="form-group">
+        <input type="hidden" name="orderId" value="@Model.OrderId">
+        <label for="">Выберите способ доставки:</label>
+        <select name="uniqueCode" class="form-control">
+            @foreach (var method in Model.Methods)
+            {
+                <option value="@method.Key">@method.Value</option>
+            }
+        </select>
+    </div>
+    <button class="btn btn-success" type="submit">Далее</button>
+</form>

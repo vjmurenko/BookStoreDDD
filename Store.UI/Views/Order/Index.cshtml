@@ -56,11 +56,15 @@
         </tr>
         </tfoot>
     </table>
-    <form asp-controller="Order" asp-action="SendCode">
+    <form asp-controller="Order" asp-action="SendConfirmationCode">
         <div class="form-group">
             <input type="hidden" name="orderId" value="@Model.Id">
             <label for="phone">Номер телефона</label>
-            <input id="phone" type="text" name="phoneNumber" placeholder="+712345678" value="+712345678" maxlength="11" class="form-control" required>
+            <input id="phone" type="text" name="phoneNumber" placeholder="+712345678" value="+71234567891" maxlength="12" class="form-control" required>
+            @if(Model.Errors.TryGetValue("phoneNumber", out var error))
+            {
+                <small class="text-danger">@error</small>
+            }
         </div>
         <button class="btn btn-success">Отправить код</button>
     </form>
