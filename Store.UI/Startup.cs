@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Store.Contractors;
 using Store.Data;
 using Store.Mesages;
 
@@ -25,6 +26,7 @@ namespace Store.Web
             services.AddSingleton<IBookRepository, BookRepository>();
             services.AddSingleton<IOrderRepository, OrderRepository>();
             services.AddSingleton<INotificationService, ConsoleService>();
+            services.AddSingleton<IDeliveryService, PostamateDeliveryService>();
             services.AddSingleton<BookService>();
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
