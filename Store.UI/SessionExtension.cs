@@ -18,7 +18,7 @@ public static class SessionExtension
 
 		if (cart.TotalCount == 0)
 		{
-			session.CleanCart();
+			session.RemoveCart();
 			return;
 		}
 
@@ -53,7 +53,7 @@ public static class SessionExtension
 		cart = null;
 		return false;
 	}
-	public static void CleanCart(this ISession session)
+	public static void RemoveCart(this ISession session)
 	{
 		session.Remove(key);
 	}

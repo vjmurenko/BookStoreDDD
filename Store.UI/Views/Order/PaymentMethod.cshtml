@@ -1,0 +1,16 @@
+﻿@model PaymentModel
+@{
+    ViewData["Title"] = "Способ оплаты";
+}
+
+<h1>Способы оплаты</h1>
+<form action=@Url.Action("StartPayment") method="post">
+    <input type="hidden" name="orderId" value="@Model.OrderId">
+    <select class="form-control" name="uniqueCode" id="payMethod">
+        @foreach (var method in Model.Methods)
+        {
+            <option value="@method.Key">@method.Value</option>
+        }
+    </select>
+    <button class="btn btn-success" type="submit">Далее</button>
+</form>
