@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Store.Contractors;
 
@@ -48,7 +49,7 @@ public class PostamateDeliveryService : IDeliveryService
         });
     }
 
-    public Form MoveNext(int orderId, int step, IReadOnlyDictionary<string, string> values)
+    public Form MoveNextForm(int orderId, int step, IReadOnlyDictionary<string, string> values)
     {
         if (step == 1)
         {
@@ -88,5 +89,31 @@ public class PostamateDeliveryService : IDeliveryService
         {
             throw new InvalidOperationException("Invalid postomate step");
         }
+    }
+
+    public OrderDelivery GetDelivery(Form form)
+    {
+        if (form.UniqueCode != UniqueCode || !form.IsFinal)
+        {
+            throw new InvalidOperationException("Invalid Form");
+        }
+
+        var cityId = form.Fields.Single(s => s.Name == "city").Value;
+        var cityName = cities[cityId];
+        var postomateId = form.Fields.Single(s => s.Name == "postomate").Value;
+        var postomateName = postamates[cityId][postomateId];
+
+
+        var parameters = new Dictionary<string, string>()
+        {
+            { nameof(cityId), cityId },
+            { nameof(cityName), cityName },
+            { nameof(postomateId), postomateId },
+            { nameof(postomateName), postomateName }
+        };
+
+
+        var description = $"Город доставки :{cityName}, Постамат: {postomateName}";
+        return new OrderDelivery(description, UniqueCode, 150m, parameters);
     }
 }

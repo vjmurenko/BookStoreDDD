@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Store.Mesages;
 
 namespace Store;
 
@@ -15,6 +16,9 @@ public class Order
 	public decimal TotalPrice => _items.Sum(i => i.Price * i.Count);
 
 	public int TotalCount => _items.Sum(i => i.Count);
+
+	public OrderDelivery OrderDelivery { get; set; }
+	public OrderPayment OrderPayment { get; set; }
 
 	public Order(int id, IEnumerable<OrderItem> items)
 	{

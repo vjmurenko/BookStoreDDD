@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Store.Contractors;
+using Store.Web.Contractors;
 
 namespace Store.Web.Controllers;
 
@@ -16,17 +17,23 @@ public class OrderController : Controller
 	private readonly IOrderRepository _orderRepository;
 	private readonly INotificationService _notificationService;
 	private readonly IEnumerable<IDeliveryService> _deliveryServices;
+	private readonly IEnumerable<IPaymentService> _paymentServices;
+	private readonly IEnumerable<IWebContractor> _webContractors;
 
 	public OrderController(
 		IBookRepository bookRepository,
 		IOrderRepository orderRepository,
 		INotificationService notificationService,
-		IEnumerable<IDeliveryService> deliveryServices)
+		IEnumerable<IDeliveryService> deliveryServices,
+		IEnumerable<IPaymentService> paymentServices,
+		IEnumerable<IWebContractor> webContractors)
 	{
 		_bookRepository = bookRepository;
 		_orderRepository = orderRepository;
 		_notificationService = notificationService;
 		_deliveryServices = deliveryServices;
+		_paymentServices = paymentServices;
+		_webContractors = webContractors;
 	}
 
 	public IActionResult Index()
@@ -88,7 +95,7 @@ public class OrderController : Controller
 		{
 			var order = _orderRepository.GetById(cart.OrderId);
 			order.DeleteAll();
-			HttpContext.Session.CleanCart();
+			HttpContext.Session.RemoveCart();
 		}
 
 		return RedirectToAction("Index");
@@ -164,13 +171,63 @@ public class OrderController : Controller
 	public IActionResult NextDelivery(int orderId, string uniqueCode, int step, Dictionary<string, string> values)
 	{
 		var deliveryService = _deliveryServices.Single(s => s.UniqueCode == uniqueCode);
-		var form = deliveryService.MoveNext(orderId, step, values);
+		var form = deliveryService.MoveNextForm(orderId, step, values);
 
 		if (form.IsFinal)
 		{
-			return null;
+			var order = _orderRepository.GetById(orderId);
+			var orderDelivery = deliveryService.GetDelivery(form);
+			order.OrderDelivery = orderDelivery;
+			_orderRepository.Update(order);
+			
+			var model = new PaymentModel()
+			{
+				OrderId = orderId,
+				Methods = _paymentServices.ToDictionary(p => p.UniqueCode, p => p.Title)
+			};
+			return View("PaymentMethod", model);
+
 		}
 		return View("DeliveryStep", form);
+	}
+
+	[HttpPost]
+	public IActionResult StartPayment(int orderId, string uniqueCode)
+	{
+		var paymentService = _paymentServices.Single(p => p.UniqueCode == uniqueCode);
+		var order = _orderRepository.GetById(orderId);
+		var form = paymentService.CreateForm(order);
+
+		var webContractors = _webContractors.SingleOrDefault(w => w.UniqueCode == uniqueCode);
+		if (webContractors != null)
+		{
+			return Redirect(webContractors.GetUri);
+		}
+		
+		return View("PaymentStep", form);
+	}
+
+	[HttpPost]
+	public IActionResult NextPayment(int orderId, string uniqueCode, int step, Dictionary<string, string> values)
+	{
+		var paymentService = _paymentServices.Single(p => p.UniqueCode == uniqueCode);
+		var form = paymentService.MoveNextForm(orderId, step, values);
+		if (form.IsFinal)
+		{
+			var order = _orderRepository.GetById(orderId);
+			var orderPayment = paymentService.GetPayment(form);
+			order.OrderPayment = orderPayment;
+			_orderRepository.Update(order);
+			return View("Finish");
+		}
+
+		return View("PaymentStep", form);
+	}
+
+	public IActionResult Finish()
+	{
+		HttpContext.Session.RemoveCart();
+		return RedirectToAction("Index", "Search");
 	}
 
 	private OrderModel MapOrder(Order order)
