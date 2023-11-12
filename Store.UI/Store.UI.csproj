@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Store.Data\Store.Data.csproj" />
+    <ProjectReference Include="..\Store.Web.App\Store.Web.App.csproj" />
     <ProjectReference Include="..\Store.YandexKasa\Store.YandexKasa.csproj" />
   </ItemGroup>
 

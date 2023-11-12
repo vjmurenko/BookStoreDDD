@@ -17,14 +17,6 @@ public abstract class Field
     }
 }
 
-
-public class HiddenField : Field
-{
-    public HiddenField(string label, string name, string value) : base(label, name, value)
-    {
-    }
-}
-
 public class SelectionField : Field
 {
     public IReadOnlyDictionary<string, string> Items { get; }

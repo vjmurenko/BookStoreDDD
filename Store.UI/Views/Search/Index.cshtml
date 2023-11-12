@@ -1,11 +1,10 @@
-﻿@using Store.Web.Controllers
-@model IEnumerable<Store.Book>
+﻿@model IEnumerable<Store.Web.App.BookModel>
 
 @{
     ViewData["Title"] = "View";
 }
 
-<form class="form-inline my-2"  method="get" asp-controller="Search" asp-action="Index" >
+<form class="form-inline my-2" method="get" asp-controller="Search" asp-action="Index">
     <input autocomplete="off" name="query" class="form-control mr-2"/>
     <button class="btn btn-success" type="submit">Search</button>
 </form>
@@ -34,13 +33,17 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model) {
-        <tr  style="cursor: pointer" onclick="location.href = '@Url.Action("Index", "Book", new {id = item.Id})'">
+    @foreach (var item in Model)
+    {
+        <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Title)
+                <a href="@Url.Action("Index", "Book", new { id = item.Id })">
+                    @Html.DisplayFor(modelItem => item.Title)
+
+                </a>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Author)

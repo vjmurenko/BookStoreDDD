@@ -1,4 +1,5 @@
-﻿@model dynamic
+﻿@using Store.YandexKasa.Areas.YandexKasa.Controllers
+@model Store.YandexKasa.Areas.YandexKasa.Models.ExampleModel
 
 @{
     ViewBag.Title = "title";
@@ -6,5 +7,11 @@
 }
 
 <h1>Yandex Kasa</h1>
-<a href="/YandexKasa/Home/Callback" class="btn btn-success">Далее</a>
 
+
+<p>Здесь эмулируется оплата в яндекс кассе</p>
+<form action="@Url.Action(nameof(HomeController.Callback), "Home", new { area = "YandexKasa" })" method="post">
+    <input type="hidden" value="@Model.OrderId" name="orderId">
+    <input type="hidden" value="@Model.ReturnUri" name="returnUri">
+    <button class="btn btn-success" type="submit">Оплатить</button>
+</form>

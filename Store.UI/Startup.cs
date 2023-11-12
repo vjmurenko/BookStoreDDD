@@ -1,16 +1,18 @@
 using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Store.Contractors;
 using Store.Data;
 using Store.Mesages;
+using Store.Web.App;
 using Store.Web.Contractors;
 using Store.YandexKasa;
 
-namespace Store.Web
+namespace Store.UI
 {
     public class Startup
     {
@@ -31,8 +33,10 @@ namespace Store.Web
             services.AddSingleton<IDeliveryService, PostamateDeliveryService>();
             services.AddSingleton<IPaymentService, CashPaymentService>();
             services.AddSingleton<IPaymentService, YandexKasaPaymentService>();
-            services.AddSingleton<IWebContractor, YandexKasaPaymentService>();
+            services.AddSingleton<IWebContractorService, YandexKasaPaymentService>();
             services.AddSingleton<BookService>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<OrderService>();
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
@@ -66,13 +70,12 @@ namespace Store.Web
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
+                    name: "areas",
+                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+                
+                endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Search}/{action=Index}/{id?}");
-
-                endpoints.MapAreaControllerRoute(
-                    name: "YandexKasa",
-                    areaName: "YandexKasa",
-                    pattern: "YandexKasa/{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

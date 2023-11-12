@@ -33,42 +33,36 @@ public class PostamateDeliveryService : IDeliveryService
             }
         };
 
-    public string UniqueCode => "Postamate";
+    public string Name => "Postamate";
     public string Title => "Доставка по Москве и Санкт-Петербургу";
 
-    public Form CreateForm(Order order)
+    public Form FirstForm(Order order)
     {
         if (order == null)
         {
             throw new ArgumentNullException(nameof(order));
         }
 
-        return new Form(UniqueCode, order.Id, 1, false, new[]
-        {
-            new SelectionField("Город", "city", "1", cities)
-        });
+        return Form.CreateFirst(Name)
+            .AddParameter("orderId", order.Id.ToString())
+            .AddField(new SelectionField("Город", "city", "1", cities));
     }
 
-    public Form MoveNextForm(int orderId, int step, IReadOnlyDictionary<string, string> values)
+    public Form NextForm(int step, IReadOnlyDictionary<string, string> values)
     {
         if (step == 1)
         {
             if (values["city"] == "1")
             {
-                return new Form(UniqueCode, orderId, 2, false, new Field[]
-                {
-                    new HiddenField("Город", "city", "1"),
-                    new SelectionField("Постамат", "postomate", "1", postamates["1"])
-                });
+                return Form.CreateNext(Name, 2, values)
+                    .AddField(new SelectionField("Постамат", "postomate", "1", postamates["1"]));
             }
 
             if (values["city"] == "2")
             {
-                return new Form(UniqueCode, orderId, 2, false, new Field[]
-                {
-                    new HiddenField("Город", "city", "2"),
-                    new SelectionField("Постамат", "postomate", "4", postamates["2"])
-                });
+
+                return Form.CreateNext(Name, 2, values)
+                    .AddField(new SelectionField("Постамат", "postomate", "4", postamates["2"]));
             }
             else
             {
@@ -78,32 +72,25 @@ public class PostamateDeliveryService : IDeliveryService
 
         if (step == 2)
         {
-            return new Form(UniqueCode, orderId, 3, true, new Field[]
-            {
-                new HiddenField("Город", "city", values["city"]),
-                new HiddenField("постамат", "postomate", values["postomate"])
-            });
-            
+
+            return Form.CreateLast(Name, 3, values);
         }
-        else
-        {
-            throw new InvalidOperationException("Invalid postomate step");
-        }
+
+        throw new InvalidOperationException("Invalid postomate step");
     }
 
     public OrderDelivery GetDelivery(Form form)
     {
-        if (form.UniqueCode != UniqueCode || !form.IsFinal)
+        if (form.ServiceName != Name || !form.IsFinal)
         {
             throw new InvalidOperationException("Invalid Form");
         }
 
-        var cityId = form.Fields.Single(s => s.Name == "city").Value;
+        var cityId = form.Parameters.Single(s => s.Key == "city").Value;
         var cityName = cities[cityId];
-        var postomateId = form.Fields.Single(s => s.Name == "postomate").Value;
+        var postomateId = form.Parameters.Single(s => s.Key == "postomate").Value;
         var postomateName = postamates[cityId][postomateId];
-
-
+        
         var parameters = new Dictionary<string, string>()
         {
             { nameof(cityId), cityId },
@@ -111,9 +98,8 @@ public class PostamateDeliveryService : IDeliveryService
             { nameof(postomateId), postomateId },
             { nameof(postomateName), postomateName }
         };
-
-
+        
         var description = $"Город доставки :{cityName}, Постамат: {postomateName}";
-        return new OrderDelivery(description, UniqueCode, 150m, parameters);
+        return new OrderDelivery(description, Name, 150m, parameters);
     }
 }

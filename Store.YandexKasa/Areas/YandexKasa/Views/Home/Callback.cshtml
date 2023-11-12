@@ -1,2 +1,9 @@
-﻿<h1>Заказ оплачен</h1>
-<a href="@Url.Action("Finish", "Order")">Вернуться назад</a>
+﻿@model Store.YandexKasa.Areas.YandexKasa.Models.ExampleModel
+<h1>Заказ оплачен, чтобы завершить оформление заказа, нажмите <em>Далее</em></h1>
+
+<form action="@Model.ReturnUri" method="post">
+    <input type="hidden" name="step" value="1"/>
+    <input type="hidden" name="serviceName" value="YandexKasa"/>
+    <input type="hidden" name="values[orderId]" value="@Model.OrderId">
+    <button class="btn btn-success" type="submit">Далее</button>
+</form>

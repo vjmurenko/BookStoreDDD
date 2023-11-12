@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Store.UI.Models;
-using System.IO;
-using System.Text;
+﻿using System.Text;
+using Microsoft.AspNetCore.Http;
 
-namespace Store.Web;
+namespace Store.Web.App;
 
 public static class SessionExtension
 {

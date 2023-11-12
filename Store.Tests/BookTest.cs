@@ -1,6 +1,4 @@
-﻿using Moq;
-
-namespace Store.Tests;
+﻿namespace Store.Tests;
 
 public class BookTest
 {

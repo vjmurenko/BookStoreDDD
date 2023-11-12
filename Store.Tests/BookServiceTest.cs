@@ -1,4 +1,5 @@
 using Moq;
+using Store.Web.App;
 
 namespace Store.Tests
 {

@@ -1,18 +1,16 @@
 @using Store.Contractors
 @model Store.Contractors.Form
 
-<h1>Метод оплаты выбран: @Model.UniqueCode</h1>
+<h1>Метод оплаты выбран: @Model.ServiceName</h1>
 <form action="@Url.Action("NextPayment")" method="post">
-
-    <input type="hidden" name="orderId" value="@Model.OrderId"/>
-    <input type="hidden" name="uniqueCode" value="@Model.UniqueCode"/>
+    <input type="hidden" name="serviceName" value="@Model.ServiceName"/>
     <input type="hidden" name="step" value="@Model.Step"/>
+    @foreach (var parameter in Model.Parameters)
+    {
+        <input type="hidden" name="values[@parameter.Key]" value="@parameter.Value"/>
+    }
     @foreach (var field in Model.Fields)
     {
-        if (field is HiddenField)
-        {
-            <input type="hidden" name="values[@field.Name]" value="@field.Value"/>
-        }
         if (field is SelectionField selectionField)
         {
             <div class="form-group">
