@@ -1,4 +1,4 @@
-﻿@model Store.Book
+﻿@model Store.Web.App.BookModel
 
 @{
     ViewData["Title"] = "BookDetails";
@@ -25,14 +25,16 @@
                 <dd class="col-8">@Model.Price</dd>
             </div>
         </dl>
-        <form class="text-center" action="@Url.Action("Add", "Order")" method="post">
+        <form class="text-center" action="@Url.Action("AddItem", "Order")" method="post">
             <input type="hidden" name="bookId" value="@Model.Id"/>
-            <button class="btn btn-outline-success" type="submit">Добавить в корзину</button>
+            <div class="form-inline ">
+                <label for="count" class="mr-2">Количество</label>
+                <input class="form-control w-25 mr-3" id="count" name="count" placeholder="Кол-во" min="1" value="1"/>
+                <button class="btn btn-outline-success" type="submit">Добавить в корзину</button>
+            </div>
         </form>
     </div>
     <div class="mt-3">
         <a asp-controller="Search" asp-action="Index" class="btn btn-primary ">Go back</a>
     </div>
 </div>
-
-

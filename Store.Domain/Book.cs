@@ -20,7 +20,7 @@ namespace Store
             Title = title;
         }
 
-        internal static bool IsIsbn(string query)
+        public static bool IsIsbn(string query)
         {
             if (string.IsNullOrEmpty(query))
             {

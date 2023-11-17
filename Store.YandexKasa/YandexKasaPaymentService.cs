@@ -4,28 +4,55 @@ using Store.Web.Contractors;
 
 namespace Store.YandexKasa;
 
-public class YandexKasaPaymentService : IPaymentService, IWebContractor
+public class YandexKasaPaymentService : IPaymentService, IWebContractorService
 {
-    public string UniqueCode => "Card";
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    public string Name => "YandexKasa";
+
     public string Title => "Яндекс касса";
-    public string GetUri => "/YandexKasa/";
+
+    public HttpRequest Request => _httpContextAccessor.HttpContext.Request;
+
+    public YandexKasaPaymentService(IHttpContextAccessor httpContextAccessor)
+    {
+        _httpContextAccessor = httpContextAccessor;
+    }
+
+    public Uri StartSession(IReadOnlyDictionary<string, string> parameters, Uri returnUri)
+    {
+        var queryString = QueryString.Create(parameters);
+        queryString += QueryString.Create("returnUri", returnUri.ToString());
+        var builder = new UriBuilder(Request.Scheme, Request.Host.Host)
+        {
+            Path = "YandexKasa/",
+            Query = queryString.ToString()
+        };
+        if (Request.Host.Port != null)
+        {
+            builder.Port = Request.Host.Port.Value;
+        }
+
+        return builder.Uri;
+    }
+
     public Form CreateForm(Order order)
     {
-        return new Form(UniqueCode, order.Id, 1, false, new Field[0]);
+        return Form.CreateFirst(Name)
+            .AddParameter("orderId", order.Id.ToString());
     }
-    
-    public Form MoveNextForm(int orderId, int step, IReadOnlyDictionary<string, string> values)
+
+    public Form MoveNextForm(int step, IReadOnlyDictionary<string, string> values)
     {
-        return new Form(UniqueCode, orderId, 2, true, new Field[0]);
+        return Form.CreateLast(Name, step + 1, values);
     }
 
     public OrderPayment GetPayment(Form form)
     {
-        if (UniqueCode != form.UniqueCode || !form.IsFinal)
+        if (Name != form.ServiceName || !form.IsFinal)
         {
             throw new InvalidOperationException("Неверная форма");
         }
 
-        return new OrderPayment(UniqueCode, "Оплата картой", new Dictionary<string, string>());
+        return new OrderPayment(Name, "Оплата картой", new Dictionary<string, string>());
     }
 }

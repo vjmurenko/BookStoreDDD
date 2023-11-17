@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Store.UI.Models;
+﻿namespace Store.Web.App;
 
 public class Cart
 {

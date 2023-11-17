@@ -1,4 +1,4 @@
-﻿@model ConfirmationModel
+﻿@model Store.Web.App.OrderModel
 @{
     ViewData["Title"] = "Подтверждение телефона";
 }
@@ -6,7 +6,6 @@
 <div class="w-50">
     <form asp-action="Confirm">
         <div class="form-group">
-            <input type="hidden" name="orderId" value="@Model.OrderId">
             <input type="hidden" name="phoneNumber" value="@Model.PhoneNumber"/>
             <label for="code">Введите код подтверждения</label>
             <input type="text" id="code" class="form-control" name="code" value="1111" placeholder="1111"/>
@@ -19,7 +18,6 @@
     </form>
     <form asp-action="SendConfirmationCode">
         <div class="form-group">
-            <input type="hidden" name="orderId" value="@Model.OrderId">
             <label for="phoneNumber">Введите номер телефона для повторной отправки</label>
             <input type="tel" id="phoneNumber" name="phoneNumber" class="form-control" value="@Model.PhoneNumber">
         </div>

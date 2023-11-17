@@ -1,7 +1,4 @@
-﻿using System;
-using Store.Mesages;
-
-namespace Store;
+﻿namespace Store.Mesages;
 
 public class ConsoleService : INotificationService
 {

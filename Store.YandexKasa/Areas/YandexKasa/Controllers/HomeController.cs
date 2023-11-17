@@ -1,17 +1,28 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Store.YandexKasa.Areas.YandexKasa.Models;
 
-namespace Store.YandexKasa.Areas.Yandex.Kasa.Controllers;
+namespace Store.YandexKasa.Areas.YandexKasa.Controllers;
 
 [Area("YandexKasa")]
 public class HomeController : Controller
 {
-    public IActionResult Index()
+    public IActionResult Index(int orderId, string returnUri)
     {
-        return View();
+        var model = new ExampleModel()
+        {
+            OrderId = orderId,
+            ReturnUri = returnUri
+        };
+        return View(model);
     }
 
-    public IActionResult Callback()
+    public IActionResult Callback(int orderId, string returnUri)
     {
-        return View("Callback");
+        var model = new ExampleModel()
+        {
+            OrderId = orderId,
+            ReturnUri = returnUri
+        };
+        return View("Callback", model);
     }
 }

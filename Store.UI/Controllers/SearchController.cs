@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Store.Web.App;
 
-namespace Store.Web.Controllers
+namespace Store.UI.Controllers
 {
     public class SearchController : Controller
     {
@@ -16,6 +17,5 @@ namespace Store.Web.Controllers
             var books = _bookService.GetBooksByQuery(query);
             return View(books);
         }
-
     }
 }

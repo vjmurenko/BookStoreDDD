@@ -1,4 +1,4 @@
-﻿@model OrderModel
+﻿@model Store.Web.App.OrderModel
 @{
     ViewData["Title"] = "Корзина";
 }
@@ -17,18 +17,18 @@
         </tr>
         </thead>
         <tbody>
-        @for (var i = 0; i < Model.OrderItems.Count; i++)
+        @for (var i = 0; i < Model.OrderItems.Length; i++)
         {
             var book = Model.OrderItems[i];
             <tr>
-                <td>@(i+1)</td>
+                <td>@(i + 1)</td>
                 <td>@book.Title</td>
                 <td>@book.Author</td>
                 <td>@book.Isbn</td>
                 <td>@book.Count</td>
                 <td>@book.Price</td>
                 <td>
-                    <form action="@Url.Action("RemoveItem", "Order")">
+                    <form method="post" action="@Url.Action("RemoveItem", "Order")">
                         <input type="hidden" name="bookId" value="@book.Id">
                         <button class="btn btn-danger" type="submit">Delete</button>
                     </form>
@@ -38,18 +38,9 @@
         </tbody>
         <tfoot class="table-light">
         <tr>
-            <th colspan="5" class="text-lg-right">Итого</th>
-            <th colspan="">@Html.DisplayNameFor(s => s.TotalCount)</th>
-            <th colspan="">@Html.DisplayNameFor(s => s.TotalPrice)</th>
-        </tr>
-        <tr>
-            <td colspan="5"></td>
+            <th colspan="4" class="text-right">Итого:</th>
             <td>@Model.TotalCount</td>
             <td>@Model.TotalPrice</td>
-        </tr>
-        <tr>
-            <td colspan="6" class="text-center">
-            </td>
             <td>
                 <button class="btn btn-danger" onclick="location.href='@Url.Action("DeleteAll")'">Delete all</button>
             </td>
@@ -61,7 +52,7 @@
             <input type="hidden" name="orderId" value="@Model.Id">
             <label for="phone">Номер телефона</label>
             <input id="phone" type="text" name="phoneNumber" placeholder="+712345678" value="+71234567891" maxlength="12" class="form-control" required>
-            @if(Model.Errors.TryGetValue("phoneNumber", out var error))
+            @if (Model.Errors.TryGetValue("phoneNumber", out var error))
             {
                 <small class="text-danger">@error</small>
             }

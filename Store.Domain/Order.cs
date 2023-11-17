@@ -17,8 +17,9 @@ public class Order
 
 	public int TotalCount => _items.Sum(i => i.Count);
 
-	public OrderDelivery OrderDelivery { get; set; }
-	public OrderPayment OrderPayment { get; set; }
+	public OrderDelivery Delivery { get; set; }
+	public OrderPayment Payment { get; set; }
+	public string PhoneNumber { get; set; }
 
 	public Order(int id, IEnumerable<OrderItem> items)
 	{
