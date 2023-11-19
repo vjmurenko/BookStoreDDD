@@ -1,86 +1,102 @@
-﻿using System;
+﻿using Store.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Store.Mesages;
 
 namespace Store;
 
 public class Order
 {
-	public int Id { get; set; }
-	
-	private List<OrderItem> _items;
-	
-	public IReadOnlyCollection<OrderItem> Items => _items;
-	
-	public decimal TotalPrice => _items.Sum(i => i.Price * i.Count);
+    private readonly OrderDto _dto;
 
-	public int TotalCount => _items.Sum(i => i.Count);
+    public int Id => _dto.Id;
+    public string PhoneNumber
+    {
+        get => _dto.PhoneNumber;
+        set
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentNullException(nameof(PhoneNumber));
+            }
+            _dto.PhoneNumber = value;
+        }
+    }
 
-	public OrderDelivery Delivery { get; set; }
-	public OrderPayment Payment { get; set; }
-	public string PhoneNumber { get; set; }
+    public OrderItemCollection Items { get; }
+    public decimal TotalPrice => Items.Sum(i => i.Price * i.Count) + (Delivery?.Price ?? 0m);
+    public int TotalCount => Items.Sum(i => i.Count);
 
-	public Order(int id, IEnumerable<OrderItem> items)
-	{
-		if (items == null)
-		{
-			throw new ArgumentNullException(nameof(items));
-		}
-		Id = id;
-		_items = new List<OrderItem>(items);
-	}
+    public OrderDelivery Delivery
+    {
+        get
+        {
+            if (_dto.DeliveryServiceName == null)
+            {
+                return null;
+            }
 
-	public OrderItem GetItem(int bookId)
-	{
-		var index = _items.FindIndex(i => i.BookId == bookId);
-		if (index == -1)
-		{
-			ThrowBookException("Book not found", bookId);
-		}
+            return new OrderDelivery(
+                _dto.DeliveryDescription,
+                _dto.DeliveryServiceName,
+                _dto.DeliveryPrice,
+                _dto.DeliveryParameters);
+        }
+        set
+        {
+            if (value == null)
+            {
+                throw new ArgumentException(nameof(Delivery));
+            }
 
-		return _items[index];
-	}
+            _dto.DeliveryServiceName = value.ServiceName;
+            _dto.DeliveryDescription = value.Description;
+            _dto.DeliveryPrice = value.Price;
+            _dto.DeliveryParameters = value.Parameters.ToDictionary(p => p.Key, p => p.Value);
+        }
+    }
 
-	public void AddOrUpdateItem(Book book, int count)
-	{
-		if (book == null)
-		{
-			throw new ArgumentNullException(nameof(book));
-		}
-		
-		var index = _items.FindIndex(i => i.BookId == book.Id);
-		if (index == -1)
-		{
-			_items.Add(new OrderItem(book.Id, book.Price, count));
-		}
-		else
-		{
-			_items[index].Count += count;
-		}
-	}
+    public OrderPayment Payment
+    {
+        get
+        {
+            if (_dto.PaymentServiceName == null)
+            {
+                return null;
+            }
 
-	public void RemoveItem(int bookId)
-	{
-		var index = _items.FindIndex(item => item.BookId == bookId);
+            return new OrderPayment(
+                _dto.PaymentServiceName,
+                _dto.PaymentDescription,
+                _dto.PaymentParameters);
+        }
+        set
+        {
+            if (value == null)
+            {
+                throw new ArgumentException(nameof(Payment));
+            }
 
-		if (index == -1)
-		{
-			ThrowBookException("Order doesn't contain specified item", bookId);
-		}
-		_items.RemoveAt(index);
-	}
-
-	public void DeleteAll()
-	{
-		_items.Clear();
-	}
-
-	private static void ThrowBookException(string message, int bookId)
-	{
-		var exception = new ArgumentException(message);
-		exception.Data["bookId"] = bookId;
-		throw exception;
-	}
-	
+            _dto.PaymentServiceName = value.ServiceName;
+            _dto.PaymentDescription = value.Description;
+            _dto.PaymentParameters = value.Parameters.ToDictionary(p => p.Key, p => p.Value);
+        }
+    }
+    
+    public Order(OrderDto orderDto)
+    {
+        _dto = orderDto;
+        Items = new OrderItemCollection(orderDto);
+    }
+    
+    public static class DtoFactory
+    {
+        public static OrderDto Create => new OrderDto();
+    }
+    
+    public static class Mapper
+    {
+        public static OrderDto Map(Order order) => order._dto;
+        public static Order Map(OrderDto dto) => new Order(dto);
+    }
 }

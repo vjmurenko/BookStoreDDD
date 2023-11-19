@@ -39,11 +39,10 @@ public static class SessionExtension
 			using (var reader = new BinaryReader(stream, Encoding.UTF8, true))
 			{
 				var orderId = reader.ReadInt32();
-				cart = new Cart(orderId)
-				{
-					TotalCount = reader.ReadInt32(),
-					TotalPrice = reader.ReadInt32()
-				};
+				var totalCount = reader.ReadInt32();
+				var totalPrice = reader.ReadInt32();
+				
+				cart = new Cart(orderId, totalCount, totalPrice);
 				return true;
 			}
 		}

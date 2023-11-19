@@ -1,6 +1,6 @@
 ﻿namespace Store.Tests;
 
-public class BookTest
+public class BookTests
 {
 
     [Fact]
