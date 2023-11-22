@@ -62,7 +62,7 @@ public class OrderService
         return false;
     }
 
-    public void AddBook(int bookId, int count)
+    public OrderModel AddBook(int bookId, int count)
     {
         if (!TryGetOrder(out Order order))
         {
@@ -72,7 +72,7 @@ public class OrderService
         UpdateSession(order);
         AddOrUpdateBook(order, bookId, count);
 
-        _orderRepository.Update(order);
+        return MapOrder(order);
     }
 
     private void AddOrUpdateBook(Order order, int bookId, int count)
@@ -86,6 +86,7 @@ public class OrderService
         {
             order.Items.Add(bookId, book.Price, count);
         }
+        _orderRepository.Update(order);
     }
 
     private void UpdateSession(Order order)
@@ -185,17 +186,17 @@ public class OrderService
     {
         var books = _bookRepository.GetBooksByIds(order.Items.Select(s => s.BookId));
         var orderItemModels = (from book in books
-            join orderItem in order.Items on book.Id equals orderItem.BookId
-            select new OrderItemModel()
-            {
-                Id = book.Id,
-                Title = book.Title,
-                Price = book.Price,
-                Count = orderItem.Count,
-                Author = book.Author,
-                Description = book.Description,
-                Isbn = book.Isbn
-            }).ToArray();
+                               join orderItem in order.Items on book.Id equals orderItem.BookId
+                               select new OrderItemModel()
+                               {
+                                   Id = book.Id,
+                                   Title = book.Title,
+                                   Price = book.Price,
+                                   Count = orderItem.Count,
+                                   Author = book.Author,
+                                   Description = book.Description,
+                                   Isbn = book.Isbn
+                               }).ToArray();
 
         var orderModel = new OrderModel
         {

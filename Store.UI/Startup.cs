@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Store.Contractors;
+using Store.Data.EF;
 using Store.Mesages;
 using Store.Web.App;
 using Store.Web.Contractors;
@@ -34,6 +35,7 @@ namespace Store.UI
             services.AddSingleton<BookService>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<OrderService>();
+            services.AddEFRepositories(Configuration.GetConnectionString("storeDb"));
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {

@@ -6,8 +6,6 @@ namespace Store.Data
     {
         public int Id { get; set; }
         public IList<OrderItemDto> Items { get; set; } = new List<OrderItemDto>();
-        public decimal TotalPrice { get; set; }
-        public int TotalCount { get; set; }
         public string DeliveryServiceName { get; set; }
         public string DeliveryDescription { get; set; }
         public decimal DeliveryPrice { get; set; }
