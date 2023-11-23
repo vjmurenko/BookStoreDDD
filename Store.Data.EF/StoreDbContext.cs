@@ -6,6 +6,9 @@ namespace Store.Data.EF;
 
 public class StoreDbContext : DbContext
 {
+    public DbSet<BookDto> Books { get; set; }
+    public DbSet<OrderDto> Orders { get; set; }
+    public DbSet<OrderItemDto> OrderItems { get; set; }
     public StoreDbContext(DbContextOptions<StoreDbContext> options) : base(options)
     {
     }
@@ -115,5 +118,4 @@ public class StoreDbContext : DbContext
             .IsRequired();
         });
     }
-
 }
