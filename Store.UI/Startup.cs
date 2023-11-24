@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -6,11 +5,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Store.Contractors;
-using Store.Data;
+using Store.Data.EF;
 using Store.Mesages;
 using Store.Web.App;
 using Store.Web.Contractors;
 using Store.YandexKasa;
+using System;
 
 namespace Store.UI
 {
@@ -27,8 +27,6 @@ namespace Store.UI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddSingleton<IBookRepository, BookRepository>();
-            services.AddSingleton<IOrderRepository, OrderRepository>();
             services.AddSingleton<INotificationService, ConsoleService>();
             services.AddSingleton<IDeliveryService, PostamateDeliveryService>();
             services.AddSingleton<IPaymentService, CashPaymentService>();
@@ -37,6 +35,7 @@ namespace Store.UI
             services.AddSingleton<BookService>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<OrderService>();
+            services.AddEFRepositories(Configuration.GetConnectionString("storeDb"));
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
@@ -72,7 +71,7 @@ namespace Store.UI
                 endpoints.MapControllerRoute(
                     name: "areas",
                     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-                
+
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Search}/{action=Index}/{id?}");

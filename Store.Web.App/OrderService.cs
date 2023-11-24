@@ -1,7 +1,7 @@
-﻿using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using PhoneNumbers;
 using Store.Mesages;
+using System.Text.RegularExpressions;
 
 namespace Store.Web.App;
 
@@ -62,50 +62,53 @@ public class OrderService
         return false;
     }
 
-    public void AddBook(int bookId, int count)
+    public OrderModel AddBook(int bookId, int count)
     {
-        Order order;
-
-        if (Session.TryGetCart(out var cart))
+        if (!TryGetOrder(out Order order))
         {
-            order = _orderRepository.GetById(cart.OrderId);
+            order = _orderRepository.Create();
+        }
+
+        AddOrUpdateBook(order, bookId, count);
+        UpdateSession(order);
+
+        return MapOrder(order);
+    }
+
+    private void AddOrUpdateBook(Order order, int bookId, int count)
+    {
+        var book = _bookRepository.GetBookById(bookId);
+        if (order.Items.TryGet(bookId, out OrderItem orderItem))
+        {
+            orderItem.Count += count;
         }
         else
         {
-            order = _orderRepository.Create();
-            cart = new Cart(order.Id);
+            order.Items.Add(bookId, book.Price, count);
         }
-
-        var book = _bookRepository.GetBookById(bookId);
-        order.AddOrUpdateItem(book, count);
         _orderRepository.Update(order);
+    }
 
-        cart.TotalPrice = order.TotalPrice;
-        cart.TotalCount = order.TotalCount;
-
-        Session.Set(cart);
+    private void UpdateSession(Order order)
+    {
+        Session.Set(new Cart(order.Id, order.TotalCount, order.TotalPrice));
     }
 
     public void DeleteBook(int bookId)
     {
-        if (Session.TryGetCart(out var cart))
-        {
-            var order = _orderRepository.GetById(cart.OrderId);
-            order.RemoveItem(bookId);
-            cart.TotalCount = order.TotalCount;
-            cart.TotalPrice = order.TotalPrice;
-            Session.Set(cart);
-        }
+        var order = GetOrder();
+        order.Items.RemoveItem(bookId);
+
+        _orderRepository.Update(order);
+        UpdateSession(order);
     }
 
     public void DeleteAllBooks()
     {
-        if (Session.TryGetCart(out var cart))
-        {
-            var order = _orderRepository.GetById(cart.OrderId);
-            order.DeleteAll();
-            Session.RemoveCart();
-        }
+        var order = GetOrder();
+        order.Items.RemoveAll();
+        _orderRepository.Update(order);
+        Session.RemoveCart();
     }
 
     public OrderModel SendConfirmationCode(string phoneNumber)
@@ -186,17 +189,17 @@ public class OrderService
     {
         var books = _bookRepository.GetBooksByIds(order.Items.Select(s => s.BookId));
         var orderItemModels = (from book in books
-            join orderItem in order.Items on book.Id equals orderItem.BookId
-            select new OrderItemModel()
-            {
-                Id = book.Id,
-                Title = book.Title,
-                Price = book.Price,
-                Count = orderItem.Count,
-                Author = book.Author,
-                Description = book.Description,
-                Isbn = book.Isbn
-            }).ToArray();
+                               join orderItem in order.Items on book.Id equals orderItem.BookId
+                               select new OrderItemModel()
+                               {
+                                   Id = book.Id,
+                                   Title = book.Title,
+                                   Price = book.Price,
+                                   Count = orderItem.Count,
+                                   Author = book.Author,
+                                   Description = book.Description,
+                                   Isbn = book.Isbn
+                               }).ToArray();
 
         var orderModel = new OrderModel
         {

@@ -1,55 +1,50 @@
-﻿namespace Store.Tests;
+﻿using Store.Data;
+
+namespace Store.Tests;
 
 public class OrderItemTests
 {
     [Fact]
     public void OrderItem_WithZeroCount_ThrowsArgumentOutOfRangeException()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new OrderItem(1, 20, 0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => OrderItem.Factory.Create(1, 20, 0, new OrderDto()));
     }
 
     [Fact]
     public void OrderItem_WithNegativeCount_ThrowsArgumentOutOfRangeException()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new OrderItem(1, 20, -20));
+        Assert.Throws<ArgumentOutOfRangeException>(() => OrderItem.Factory.Create(1, 20, -20, new OrderDto()));
     }
 
     [Fact]
     public void OrderItem_WithPositiveCount_SetCount()
     {
-        const int countdownEvent = 30;
-        var orderItem = new OrderItem(2, 20, countdownEvent);
-        Assert.Equal(countdownEvent, orderItem.Count);
+        const int count = 30;
+        var orderItem = OrderItem.Factory.Create(2, 20, count, new OrderDto());
+        Assert.Equal(count, orderItem.Count);
     }
 
-
+    
     [Fact]
-    public void Count_WithZeroValue_ThrowsArgumentOutOfRangeException()
+    public void OrderItemCount_WithPositiveValue_SetsCount()
     {
-        var orderItem = new OrderItem(1, 2, 3);
+        var orderItemDto = OrderItem.Factory.Create(1, 2, 3, new OrderDto());
+        var orderItem = OrderItem.Mapper.Map(orderItemDto);
 
-        Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            orderItem.Count = 0;
-        });
+        orderItem.Count = 50;
+        Assert.Equal(50, orderItem.Count);
     }
 
     [Fact]
-    public void Count_WithNegativeValue_ThrowsArgumentOutOfRangeException()
+    public void OrderItemCount_WithNegativeValue_ThrowsException()
     {
-        var orderItem = new OrderItem(1, 2, 3);
+        var orderItemDto = OrderItem.Factory.Create(1, 2, 3, new OrderDto());
+        var orderItem = OrderItem.Mapper.Map(orderItemDto);
+
+
         Assert.Throws<ArgumentOutOfRangeException>(() =>
         {
             orderItem.Count = -3;
         });
-    }
-    
-    [Fact]
-    public void Count_WithPositiveValue_SetsCount()
-    {
-        var orderItem = new OrderItem(1, 2, 3);
-
-        orderItem.Count = 50;
-        Assert.Equal(50, orderItem.Count);
     }
 }
