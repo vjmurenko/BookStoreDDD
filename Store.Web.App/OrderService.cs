@@ -69,8 +69,8 @@ public class OrderService
             order = _orderRepository.Create();
         }
 
-        UpdateSession(order);
         AddOrUpdateBook(order, bookId, count);
+        UpdateSession(order);
 
         return MapOrder(order);
     }
@@ -80,7 +80,7 @@ public class OrderService
         var book = _bookRepository.GetBookById(bookId);
         if (order.Items.TryGet(bookId, out OrderItem orderItem))
         {
-            orderItem.Count++;
+            orderItem.Count += count;
         }
         else
         {
@@ -98,6 +98,8 @@ public class OrderService
     {
         var order = GetOrder();
         order.Items.RemoveItem(bookId);
+
+        _orderRepository.Update(order);
         UpdateSession(order);
     }
 
@@ -105,6 +107,7 @@ public class OrderService
     {
         var order = GetOrder();
         order.Items.RemoveAll();
+        _orderRepository.Update(order);
         Session.RemoveCart();
     }
 

@@ -1,51 +1,55 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Store.Data.EF
 {
     internal class BookRepository : IBookRepository
     {
-        public Order Create()
+        private readonly DbContextFactory dbContextFactory;
+        private StoreDbContext DbContext => dbContextFactory.Create(typeof(BookRepository));
+
+        public BookRepository(DbContextFactory dbContextFactory)
         {
-            throw new NotImplementedException();
+            this.dbContextFactory = dbContextFactory;
         }
 
         public Book[] GetAllBooks()
         {
-            throw new NotImplementedException();
+            return DbContext.Books
+                .AsEnumerable()
+                 .Select(Book.Mapper.Map)
+                 .ToArray();
         }
 
         public Book[] GetAllBooksByAuthorOrTitle(string query)
         {
-            throw new NotImplementedException();
+            return DbContext.Books
+                .Where(b => Microsoft.EntityFrameworkCore.EF.Functions.Contains(b.Author, query) || Microsoft.EntityFrameworkCore.EF.Functions.Contains(b.Title, query))
+                .AsEnumerable()
+                .Select(Book.Mapper.Map)
+                .ToArray();
         }
 
         public Book GetBookById(int id)
         {
-            throw new NotImplementedException();
+            var book = DbContext.Books.SingleOrDefault(b => b.Id == id);
+            return Book.Mapper.Map(book);
         }
 
         public Book[] GetBookByIsbn(string isbn)
         {
-            throw new NotImplementedException();
+            return DbContext.Books
+                .Where(b => b.Isbn == isbn)
+                .AsEnumerable()
+                .Select(Book.Mapper.Map).ToArray();
         }
 
         public Book[] GetBooksByIds(IEnumerable<int> bookIds)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Order GetById(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Update(Order order)
-        {
-            throw new NotImplementedException();
+        {  
+            return DbContext.Books
+                .Where(b => bookIds.Contains(b.Id))
+                .AsEnumerable()
+                .Select(Book.Mapper.Map)
+                .ToArray();
         }
     }
 }

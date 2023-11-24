@@ -1,26 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Store.Data.EF
 {
-    internal class OrderRepository : IOrderRepository
+    public class OrderRepository : IOrderRepository
     {
+        private readonly DbContextFactory _factory;
+        private StoreDbContext DbContext => _factory.Create(typeof(OrderRepository));
+
+        public OrderRepository(DbContextFactory factory)
+        {
+            _factory = factory;
+        }
+
         public Order Create()
         {
-            throw new NotImplementedException();
+
+            var orderDto = Order.DtoFactory.Create;
+            DbContext.Orders.Add(orderDto); ;
+            DbContext.SaveChanges();
+
+            return Order.Mapper.Map(orderDto);
+
         }
 
         public Order GetById(int id)
         {
-            throw new NotImplementedException();
+            var orderDto = DbContext.Orders
+                .Include(o => o.Items)
+                .Single(o => o.Id == id);
+
+            return Order.Mapper.Map(orderDto);
+
         }
 
         public void Update(Order order)
         {
-            throw new NotImplementedException();
+
+            var orderFormDb = DbContext.Orders.FirstOrDefault(s => s.Id == order.Id);
+
+            DbContext.Orders.Update(Order.Mapper.Map(order));
+            DbContext.SaveChanges();
         }
     }
 }
