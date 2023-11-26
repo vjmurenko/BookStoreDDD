@@ -11,6 +11,7 @@ using Store.Web.App;
 using Store.Web.Contractors;
 using Store.YandexKasa;
 using System;
+using Store.UI.Filters;
 
 namespace Store.UI
 {
@@ -26,7 +27,11 @@ namespace Store.UI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddLogging();
+            services.AddControllersWithViews(c =>
+            {
+                c.Filters.Add(typeof(ExceptionFilter));
+            });
             services.AddSingleton<INotificationService, ConsoleService>();
             services.AddSingleton<IDeliveryService, PostamateDeliveryService>();
             services.AddSingleton<IPaymentService, CashPaymentService>();
@@ -49,7 +54,8 @@ namespace Store.UI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+
+            if (!env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
