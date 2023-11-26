@@ -31,7 +31,7 @@ namespace Store.Data.EF
 
         public Book GetBookById(int id)
         {
-            var book = DbContext.Books.SingleOrDefault(b => b.Id == id);
+            var book = DbContext.Books.Single(b => b.Id == id);
             return Book.Mapper.Map(book);
         }
 

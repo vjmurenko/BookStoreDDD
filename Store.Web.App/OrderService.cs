@@ -173,18 +173,6 @@ public class OrderService
         Session.RemoveCart();
     }
 
-    private static bool IsValidPhone(string phone)
-    {
-        if (string.IsNullOrEmpty(phone))
-        {
-            return false;
-        }
-
-        phone = phone.Replace(" ", "").Replace("-", "");
-
-        return Regex.IsMatch(phone, @"\+?\d{11}$");
-    }
-
     private OrderModel MapOrder(Order order)
     {
         var books = _bookRepository.GetBooksByIds(order.Items.Select(s => s.BookId));
