@@ -8,4 +8,9 @@ public class DebugService : INotificationService
     {
         Debug.WriteLine($"Phone number: {phoneNumber}, verification code: {code}");
     }
+
+    public void StartProcess(Order order)
+    {
+        throw new System.NotImplementedException();
+    }
 }
