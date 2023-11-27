@@ -13,7 +13,7 @@
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Id)
+            №
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Title)
@@ -33,11 +33,11 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model)
+    @foreach (var (item, index) in Model.Select((m, i) => (m, i)))
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Id)
+                @(index + 1)
             </td>
             <td>
                 <a href="@Url.Action("Index", "Book", new { id = item.Id })">

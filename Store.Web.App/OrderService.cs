@@ -165,12 +165,13 @@ public class OrderService
         _orderRepository.Update(order);
     }
 
-    public void SetPayment(OrderPayment orderPayment)
+    public OrderModel SetPayment(OrderPayment orderPayment)
     {
         var order = GetOrder();
         order.Payment = orderPayment;
         _orderRepository.Update(order);
         Session.RemoveCart();
+        return MapOrder(order);
     }
 
     private OrderModel MapOrder(Order order)
@@ -195,7 +196,9 @@ public class OrderService
             TotalCount = order.TotalCount,
             TotalPrice = order.TotalPrice,
             OrderItems = orderItemModels,
-            PhoneNumber = order.PhoneNumber
+            PhoneNumber = order.PhoneNumber,
+            DeliveryDescription = order.Delivery?.Description,
+            PaymentDescription = order.Payment?.Description,
         };
         return orderModel;
     }

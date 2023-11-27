@@ -55,7 +55,7 @@ namespace Store.UI
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
 
-            if (!env.IsDevelopment())
+            if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
