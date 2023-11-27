@@ -1,10 +1,61 @@
+@model Store.Web.App.OrderModel
 @{
     ViewData["Title"] = "Заказ оформлен";
 }
 
-<p>
+<h2>
     Заказ оформлен и передан в доставку, ждите смс
-</p>
+</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">Номер заказа</dt>
+    <dd class="col-sm-9">@Model.Id</dd>
+
+    <dt class="col-sm-3">Номер телефона</dt>
+    <dd class="col-sm-9">@Model.PhoneNumber</dd>
+
+    <dt class="col-sm-3">Способ доставки</dt>
+    <dd class="col-sm-9">@Model.DeliveryDescription</dd>
+
+    <dt class="col-sm-3">Способ оплаты</dt>
+    <dd class="col-sm-9">@Model.PaymentDescription</dd>
+
+    <dt class="col-sm-3">Кол-во Товаров</dt>
+    <dd class="col-sm-9">@Model.TotalCount</dd>
+
+    <dt class="col-sm-3">Общая сумма</dt>
+    <dd class="col-sm-9">@Model.TotalPrice</dd>
+</dl>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>№</th>
+        <th>Title</th>
+        <th>Price</th>
+        <th>Count</th>
+        <th>Author</th>
+        <th>Description</th>
+        <th>Isbn</th>
+    </tr>
+    </thead>
+    <tbody>
+    @for (var i = 0; i < Model.OrderItems.Length; i++)
+    {
+        var orderItem = Model.OrderItems[i];
+        <tr>
+            <td>@(i + 1)</td>
+            <td>@orderItem.Title</td>
+            <td>@orderItem.Price</td>
+            <td>@orderItem.Count</td>
+            <td>@orderItem.Author</td>
+            <td>@orderItem.Description</td>
+            <td>@orderItem.Isbn</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
 <p>
     <a href="@Url.Action("Index", "Search")">Вернуться назад</a>
 </p>

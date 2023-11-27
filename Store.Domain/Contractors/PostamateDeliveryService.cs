@@ -90,6 +90,9 @@ public class PostamateDeliveryService : IDeliveryService
         var cityName = cities[cityId];
         var postomateId = form.Parameters.Single(s => s.Key == "postomate").Value;
         var postomateName = postamates[cityId][postomateId];
+        var priceParameter = form.Parameters.Single(p => p.Key == "price").Value;
+        var priceValue = decimal.Parse(priceParameter);
+         
         
         var parameters = new Dictionary<string, string>()
         {
@@ -100,6 +103,6 @@ public class PostamateDeliveryService : IDeliveryService
         };
         
         var description = $"Город доставки :{cityName}, Постамат: {postomateName}";
-        return new OrderDelivery(description, Name, 150m, parameters);
+        return new OrderDelivery(description, Name, priceValue, parameters);
     }
 }

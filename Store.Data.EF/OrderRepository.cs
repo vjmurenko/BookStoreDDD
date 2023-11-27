@@ -35,9 +35,6 @@ namespace Store.Data.EF
 
         public void Update(Order order)
         {
-
-            var orderFormDb = DbContext.Orders.FirstOrDefault(s => s.Id == order.Id);
-
             DbContext.Orders.Update(Order.Mapper.Map(order));
             DbContext.SaveChanges();
         }

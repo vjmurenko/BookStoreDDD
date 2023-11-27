@@ -150,9 +150,9 @@ public class OrderController : Controller
         }
 
         var payment = paymentService.GetPayment(form);
-        _orderService.SetPayment(payment);
-
-        return View("Finish");
+        var orderModel = _orderService.SetPayment(payment);
+        
+        return View("Finish", orderModel);
     }
 
     private Uri GetReturnUri(string action)
