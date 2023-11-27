@@ -171,6 +171,8 @@ public class OrderService
         order.Payment = orderPayment;
         _orderRepository.Update(order);
         Session.RemoveCart();
+        
+        _notificationService.StartProcess(order);
         return MapOrder(order);
     }
 
