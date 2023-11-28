@@ -12,44 +12,47 @@ namespace Store.Data.EF
             this.dbContextFactory = dbContextFactory;
         }
 
-        public Book[] GetAllBooks()
+        public async Task<Book[]> GetAllBooksAsync()
         {
-            return DbContext.Books
-                .AsEnumerable()
-                 .Select(Book.Mapper.Map)
-                 .ToArray();
-        }
+            var books = await DbContext.Books
+                .ToArrayAsync();
 
-        public Book[] GetAllBooksByAuthorOrTitle(string query)
+            return books.Select(Book.Mapper.Map).ToArray();
+        }
+        
+        public async Task<Book[]> GetAllBooksByAuthorOrTitleAsync(string query)
         {
-            return DbContext.Books
+            var books = await  DbContext.Books
                 .Where(b => Microsoft.EntityFrameworkCore.EF.Functions.Contains(b.Author, query) || Microsoft.EntityFrameworkCore.EF.Functions.Contains(b.Title, query))
-                .AsEnumerable()
-                .Select(Book.Mapper.Map)
-                .ToArray();
+                .ToArrayAsync();
+            
+            return books.Select(Book.Mapper.Map).ToArray();
         }
-
-        public Book GetBookById(int id)
+        
+        public async  Task<Book> GetBookByIdAsync(int id)
         {
-            var book = DbContext.Books.Single(b => b.Id == id);
+            var book =  await DbContext.Books
+                .SingleAsync(b => b.Id == id);
+
             return Book.Mapper.Map(book);
         }
-
-        public Book[] GetBookByIsbn(string isbn)
+        
+        public async  Task<Book[]> GetBookByIsbnAsync(string isbn)
         {
-            return DbContext.Books
+            var books = await DbContext.Books
                 .Where(b => b.Isbn == isbn)
-                .AsEnumerable()
-                .Select(Book.Mapper.Map).ToArray();
-        }
+                .ToArrayAsync();
 
-        public Book[] GetBooksByIds(IEnumerable<int> bookIds)
-        {  
-            return DbContext.Books
+            return books.Select(Book.Mapper.Map).ToArray();
+        }
+        
+        public async Task<Book[]> GetBooksByIdsAsync(IEnumerable<int> bookIds)
+        {
+            var books = await DbContext.Books
                 .Where(b => bookIds.Contains(b.Id))
-                .AsEnumerable()
-                .Select(Book.Mapper.Map)
-                .ToArray();
+                .ToArrayAsync();
+
+            return books.Select(Book.Mapper.Map).ToArray();
         }
     }
 }

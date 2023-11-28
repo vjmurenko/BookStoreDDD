@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Store.Web.App;
 
 namespace Store.UI.Controllers
@@ -12,9 +13,9 @@ namespace Store.UI.Controllers
             _bookService = bookService;
         }
 
-        public IActionResult Index(string query)
+        public async Task<IActionResult> Index(string query)
         {
-            var books = _bookService.GetBooksByQuery(query);
+            var books = await _bookService.GetBooksByQuery(query);
             return View(books);
         }
     }

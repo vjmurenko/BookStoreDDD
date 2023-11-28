@@ -1,8 +1,10 @@
-﻿namespace Store;
+﻿using System.Threading.Tasks;
+
+namespace Store;
 
 public interface IOrderRepository
 {
-    void Update(Order order);
-    Order Create();
-    Order GetById(int id);
+    Task UpdateAsync(Order order);
+    Task<Order> CreateAsync();
+    Task<Order> GetByIdAsync(int id);
 }

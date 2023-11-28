@@ -9,29 +9,29 @@ public class BookService
         _bookRepository = bookRepository;
     }
 
-    public IReadOnlyCollection<BookModel> GetBooksByQuery(string query)
+    public async Task<IReadOnlyCollection<BookModel>> GetBooksByQuery(string query)
     {
         query = query?.Trim();
         Book[] books;
         if (string.IsNullOrEmpty(query))
         {
-            books = _bookRepository.GetAllBooks();
+            books = await _bookRepository.GetAllBooksAsync();
         }
         else if(Book.IsIsbn(query))
         {
-            books = _bookRepository.GetBookByIsbn(query);
+            books = await _bookRepository.GetBookByIsbnAsync(query);
         }
         else
         {
-            books = _bookRepository.GetAllBooksByAuthorOrTitle(query);
+            books = await _bookRepository.GetAllBooksByAuthorOrTitleAsync(query);
         }
 
         return books.Select(Map).ToArray();
     }
 
-    public BookModel GetByid(int id)
+    public async Task<BookModel> GetByid(int id)
     {
-        var book = _bookRepository.GetBookById(id);
+        var book = await _bookRepository.GetBookByIdAsync(id);
         return Map(book);
     }
 

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using PhoneNumbers;
 using Store.Mesages;
-using System.Text.RegularExpressions;
 
 namespace Store.Web.App;
 
@@ -28,21 +27,22 @@ public class OrderService
     private ISession Session => _httpContextAccessor.HttpContext.Session;
     private readonly PhoneNumberUtil _phoneNumberUtil = PhoneNumberUtil.GetInstance();
 
-    public bool TryGetModel(out OrderModel orderModel)
+    public async Task<(bool, OrderModel)> TryGetModelAsync()
     {
-        if (TryGetOrder(out var order))
+        var (success, order) = await TryGetOrder();
+        if (success)
         {
-            orderModel = MapOrder(order);
-            return true;
+            var orderModel = await MapOrderAsync(order);
+            return (true, orderModel);
         }
 
-        orderModel = null;
-        return false;
+        return (false, null);
     }
 
-    public Order GetOrder()
+    public async Task<Order> GetOrder()
     {
-        if (TryGetOrder(out Order order))
+        var (success, order) = await TryGetOrder();
+        if (success)
         {
             return order;
         }
@@ -50,34 +50,34 @@ public class OrderService
         throw new InvalidOperationException("Empty session");
     }
 
-    private bool TryGetOrder(out Order order)
+    private async Task<(bool, Order)> TryGetOrder()
     {
         if (Session.TryGetCart(out Cart cart))
         {
-            order = _orderRepository.GetById(cart.OrderId);
-            return true;
+            var order = await _orderRepository.GetByIdAsync(cart.OrderId);
+            return (true, order);
         }
 
-        order = null;
-        return false;
+        return (false, null);
     }
 
-    public OrderModel AddBook(int bookId, int count)
+    public async Task<OrderModel> AddBook(int bookId, int count)
     {
-        if (!TryGetOrder(out Order order))
+        var (success, order) = await TryGetOrder();
+        if (!success)
         {
-            order = _orderRepository.Create();
+            order = await _orderRepository.CreateAsync();
         }
 
-        AddOrUpdateBook(order, bookId, count);
+        await AddOrUpdateBook(order, bookId, count);
         UpdateSession(order);
 
-        return MapOrder(order);
+        return await MapOrderAsync(order);
     }
 
-    private void AddOrUpdateBook(Order order, int bookId, int count)
+    private async Task AddOrUpdateBook(Order order, int bookId, int count)
     {
-        var book = _bookRepository.GetBookById(bookId);
+        var book = await _bookRepository.GetBookByIdAsync(bookId);
         if (order.Items.TryGet(bookId, out OrderItem orderItem))
         {
             orderItem.Count += count;
@@ -86,7 +86,8 @@ public class OrderService
         {
             order.Items.Add(bookId, book.Price, count);
         }
-        _orderRepository.Update(order);
+
+        await _orderRepository.UpdateAsync(order);
     }
 
     private void UpdateSession(Order order)
@@ -94,34 +95,34 @@ public class OrderService
         Session.Set(new Cart(order.Id, order.TotalCount, order.TotalPrice));
     }
 
-    public void DeleteBook(int bookId)
+    public async Task DeleteBook(int bookId)
     {
-        var order = GetOrder();
+        var order = await GetOrder();
         order.Items.RemoveItem(bookId);
 
-        _orderRepository.Update(order);
+        await _orderRepository.UpdateAsync(order);
         UpdateSession(order);
     }
 
-    public void DeleteAllBooks()
+    public async Task DeleteAllBooks()
     {
-        var order = GetOrder();
+        var order = await GetOrder();
         order.Items.RemoveAll();
-        _orderRepository.Update(order);
+        await _orderRepository.UpdateAsync(order);
         Session.RemoveCart();
     }
 
-    public OrderModel SendConfirmationCode(string phoneNumber)
+    public async Task<OrderModel> SendConfirmationCodeAsync(string phoneNumber)
     {
-        var order = GetOrder();
-        var orderModel = MapOrder(order);
+        var order = await GetOrder();
+        var orderModel = await MapOrderAsync(order);
 
         if (TryFormatPhone(phoneNumber, out string formattedPhone))
         {
             orderModel.PhoneNumber = formattedPhone;
             // var code = new Random().Next(1000, 10000);
             var code = 1111;
-            _notificationService.SendNotificationCode(code, formattedPhone);
+            await _notificationService.SendNotificationCodeAsync(code, formattedPhone);
             Session.SetInt32(formattedPhone, code);
         }
         else
@@ -132,7 +133,7 @@ public class OrderService
         return orderModel;
     }
 
-    public OrderModel ConfirmPhone(string phoneNumber, int code)
+    public async Task<OrderModel> ConfirmPhoneAsync(string phoneNumber, int code)
     {
         var orderModel = new OrderModel();
         var codeFromSession = Session.GetInt32(phoneNumber);
@@ -149,48 +150,48 @@ public class OrderService
             return orderModel;
         }
 
-        var order = GetOrder();
+        var order = await GetOrder();
         order.PhoneNumber = phoneNumber;
 
-        _orderRepository.Update(order);
+        await _orderRepository.UpdateAsync(order);
         Session.Remove(phoneNumber);
 
-        return MapOrder(order);
+        return await MapOrderAsync(order);
     }
 
-    public void SetDelivery(OrderDelivery orderDelivery)
+    public async Task SetDelivery(OrderDelivery orderDelivery)
     {
-        var order = GetOrder();
+        var order = await GetOrder();
         order.Delivery = orderDelivery;
-        _orderRepository.Update(order);
+        await _orderRepository.UpdateAsync(order);
     }
 
-    public OrderModel SetPayment(OrderPayment orderPayment)
+    public async Task<OrderModel> SetPaymentAsync(OrderPayment orderPayment)
     {
-        var order = GetOrder();
+        var order = await GetOrder();
         order.Payment = orderPayment;
-        _orderRepository.Update(order);
+        await _orderRepository.UpdateAsync(order);
         Session.RemoveCart();
-        
-        _notificationService.StartProcess(order);
-        return MapOrder(order);
+
+        await _notificationService.StartProcessAsync(order);
+        return await MapOrderAsync(order);
     }
 
-    private OrderModel MapOrder(Order order)
+    private async Task<OrderModel> MapOrderAsync(Order order)
     {
-        var books = _bookRepository.GetBooksByIds(order.Items.Select(s => s.BookId));
+        var books = await _bookRepository.GetBooksByIdsAsync(order.Items.Select(s => s.BookId));
         var orderItemModels = (from book in books
-                               join orderItem in order.Items on book.Id equals orderItem.BookId
-                               select new OrderItemModel()
-                               {
-                                   Id = book.Id,
-                                   Title = book.Title,
-                                   Price = book.Price,
-                                   Count = orderItem.Count,
-                                   Author = book.Author,
-                                   Description = book.Description,
-                                   Isbn = book.Isbn
-                               }).ToArray();
+            join orderItem in order.Items on book.Id equals orderItem.BookId
+            select new OrderItemModel()
+            {
+                Id = book.Id,
+                Title = book.Title,
+                Price = book.Price,
+                Count = orderItem.Count,
+                Author = book.Author,
+                Description = book.Description,
+                Isbn = book.Isbn
+            }).ToArray();
 
         var orderModel = new OrderModel
         {

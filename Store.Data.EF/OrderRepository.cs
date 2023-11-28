@@ -1,42 +1,38 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Store.Data.EF
+namespace Store.Data.EF;
+
+public class OrderRepository : IOrderRepository
 {
-    public class OrderRepository : IOrderRepository
+    private readonly DbContextFactory _factory;
+    private StoreDbContext DbContext => _factory.Create(typeof(OrderRepository));
+
+    public OrderRepository(DbContextFactory factory)
     {
-        private readonly DbContextFactory _factory;
-        private StoreDbContext DbContext => _factory.Create(typeof(OrderRepository));
+        _factory = factory;
+    }
 
-        public OrderRepository(DbContextFactory factory)
-        {
-            _factory = factory;
-        }
+    public async Task<Order> CreateAsync()
+    {
+        var orderDto = Order.DtoFactory.Create;
+        DbContext.Orders.Add(orderDto); ;
+        await DbContext.SaveChangesAsync();
 
-        public Order Create()
-        {
+        return Order.Mapper.Map(orderDto);
+    }
 
-            var orderDto = Order.DtoFactory.Create;
-            DbContext.Orders.Add(orderDto); ;
-            DbContext.SaveChanges();
+    public  async Task<Order> GetByIdAsync(int id)
+    {
+        var orderDto = await DbContext.Orders
+            .Include(o => o.Items)
+            .SingleAsync(o => o.Id == id);
 
-            return Order.Mapper.Map(orderDto);
+        return Order.Mapper.Map(orderDto);
+    }
 
-        }
-
-        public Order GetById(int id)
-        {
-            var orderDto = DbContext.Orders
-                .Include(o => o.Items)
-                .Single(o => o.Id == id);
-
-            return Order.Mapper.Map(orderDto);
-
-        }
-
-        public void Update(Order order)
-        {
-            DbContext.Orders.Update(Order.Mapper.Map(order));
-            DbContext.SaveChanges();
-        }
+    public async Task UpdateAsync(Order order)
+    {
+        DbContext.Orders.Update(Order.Mapper.Map(order));
+        await DbContext.SaveChangesAsync();
     }
 }

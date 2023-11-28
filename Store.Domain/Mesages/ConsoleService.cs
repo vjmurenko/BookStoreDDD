@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Mail;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Store.Mesages;
 
@@ -30,5 +31,17 @@ public class ConsoleService : INotificationService
         Console.WriteLine($"Order id: {order.Id}");
         Console.WriteLine($"Delivery: {order.Delivery.Description}");
         Console.WriteLine($"Payment: {order.Payment.Description}");
+    }
+
+    public Task SendNotificationCodeAsync(int code, string phoneNumber)
+    {
+        SendNotificationCode(code, phoneNumber);
+        return Task.CompletedTask;
+    }
+
+    public Task StartProcessAsync(Order order)
+    {
+        StartProcess(order);
+        return Task.CompletedTask;
     }
 }
